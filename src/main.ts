@@ -19,7 +19,6 @@ const openai = new OpenAI({
   }
 });
 
-console.log("HEYYYYYYYY")
 
 interface PRDetails {
   owner: string;
