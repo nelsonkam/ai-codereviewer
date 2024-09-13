@@ -13,6 +13,10 @@ const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
 const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  defaultHeaders: {
+    "X-Title": "nelsonkam/ai-codereviewer", // Optional. Shows in rankings on openrouter.ai.
+  }
 });
 
 interface PRDetails {
@@ -116,18 +120,13 @@ async function getAIResponse(prompt: string): Promise<Array<{
 }> | null> {
   const queryConfig = {
     model: OPENAI_API_MODEL,
-    temperature: 0.2,
-    max_tokens: 700,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
   };
 
   try {
     const response = await openai.chat.completions.create({
       ...queryConfig,
       // return JSON if the model supports it:
-      ...(OPENAI_API_MODEL === "gpt-4-1106-preview"
+      ...(OPENAI_API_MODEL.includes('gpt-4o')
         ? { response_format: { type: "json_object" } }
         : {}),
       messages: [
